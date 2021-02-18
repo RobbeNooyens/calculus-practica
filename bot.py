@@ -18,8 +18,11 @@ async def on_message(message):
         if "load " in message.content:
             exercises.clear()
             data: string = message.content.replace("load ", "")
-            for s in [float(s) for s in data.split("; ")]:
-                exercises.append(s)
+            try:
+                for s in [float(s) for s in data.split("; ")]:
+                    exercises.append(s)
+            except:
+                return
             # shuffle(exercises)
             print(exercises)
             await message.delete()
