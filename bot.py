@@ -27,7 +27,7 @@ async def on_message(message):
             print(exercises)
             await message.delete()
             reply = await message.channel.send(
-                "De oefeningen zijn ingelezen! Klik op onderstaande emoji om een oefeningen toegewezen te krijgen of typ 'claim <oefeningnr>'.")
+                "De oefeningen zijn ingelezen! Klik op onderstaande emoji om een oefeningen toegewezen te krijgen of typ '%claim <oefeningnr>'.")
             await reply.add_reaction("\N{THUMBS UP SIGN}")
             await message.channel.send("Resterende oefeningen: " + ' | '.join([str(e) for e in exercises]))
         if "claim" in message.content and "%" == message.content[0]:
