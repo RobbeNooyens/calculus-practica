@@ -12,7 +12,6 @@ prefix = "%"
 load_str = prefix + "load "
 claim_str = prefix + "claim "
 
-
 @client.event
 async def on_message(message):
     if message.author.bot:
