@@ -1,6 +1,4 @@
 import discord
-from random import shuffle
-import string
 
 import config
 
@@ -20,7 +18,8 @@ async def on_message(message):
         if message.content.startswith(load_str):
             exercises.clear()
             data: str = message.content.replace(load_str, "")
-            exercises = data.split("; ")
+            for s in data.split("; "):
+                exercises.append(s)
             print(exercises)
             await message.delete()
             reply = await message.channel.send(
