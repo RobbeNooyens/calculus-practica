@@ -30,7 +30,7 @@ async def on_message(message):
         if message.content.startswith(claim_str):
             ex = message.content.replace(claim_str, "")
             if not ex in exercises:
-                await message.author.send("Deze oefeningen bestaat niet of is al door iemand anders geclaimed!")
+                await message.author.send("Deze oefening bestaat niet of is al door iemand anders geclaimed!")
             else:
                 exercises.remove(ex)
                 await message.author.send("Je hebt oefening " + ex + " geclaimed. Veel succes!")
