@@ -8,6 +8,7 @@ client = discord.Client()
 exercises: list = []
 statusmessage = None
 CHANNELS = [810946686728929300, 810920527736340550, 541408928408272938]
+prefix = "%"
 
 
 @client.event
@@ -27,12 +28,12 @@ async def on_message(message):
             print(exercises)
             await message.delete()
             reply = await message.channel.send(
-                "De oefeningen zijn ingelezen! Klik op onderstaande emoji om een oefeningen toegewezen te krijgen of typ '%claim <oefeningnr>'.")
+                "De oefeningen zijn ingelezen! Klik op onderstaande emoji om een oefeningen toegewezen te krijgen of typ " + prefix + 'claim <oefeningnr>'.")
             await reply.add_reaction("\N{THUMBS UP SIGN}")
             await message.channel.send("Resterende oefeningen: " + ' | '.join([str(e) for e in exercises]))
         if "claim" in message.content and "%" == message.content[0]:
             try:
-                nr = float(message.content.replace("claim ", "").replace("=", ""))
+                nr = float(message.content.replace("claim ", "").replace(prefix, ""))
             except:
                 await message.author.send(message.content.replace("claim ", "") + " is geen geldig nummer!")
                 await message.delete()
