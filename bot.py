@@ -10,18 +10,6 @@ prefix = "%"
 load_str = prefix + "load "
 claim_str = prefix + "claim "
 
-def find_match(input):
-    matches = 0
-    lastmatch = ""
-    for ex in exercises:
-        if input in ex:
-            matches += 1
-            lastmatch = ex
-    if matches == 1:
-        return lastmatch
-    else:
-        return None
-
 @client.event
 async def on_message(message):
     if message.author.bot:
@@ -48,12 +36,11 @@ async def on_message(message):
             await message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
         if message.content.startswith(claim_str):
             ex = message.content.replace(claim_str, "").strip()
-            match = find_match(ex)
-            if match is None:
-                await message.author.send("Ik begrijp niet welke oefening je bedoelt. Er kunnen er meerdere zijn, of deze kan niet bestaan, of hij is al geclaimed.")
+            if ex not in exercises:
+                await message.author.send("Ik begrijp niet welke oefening je bedoelt. Je moet de volledige oefening meegegeven zoals hij in mijn lijst staat.")
             else:
-                exercises.remove(match)
-                await message.author.send("Je hebt oefening " + match + " geclaimed. Veel succes!")
+                exercises.remove(ex)
+                await message.author.send("Je hebt oefening " + ex + " geclaimed. Veel succes!")
                 await message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
             await message.delete()
 
