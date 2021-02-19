@@ -18,8 +18,16 @@ async def on_message(message):
         if message.content.startswith(load_str):
             exercises.clear()
             data: str = message.content.replace(load_str, "")
-            for s in data.split("; "):
-                exercises.append(s)
+            data = data.strip('\n\t ')
+            reeksen = data.split('\n')
+            for reeks in reeksen:
+                components = reeks.split(' / ')
+                if len(components) != 2:
+                    continue
+                name = components[0]
+                toread = components[1]
+                for ex in toread.split('; '):
+                    exercises.append(name+"-"+ex)
             print(exercises)
             await message.delete()
             reply = await message.channel.send(
@@ -27,9 +35,9 @@ async def on_message(message):
             await reply.add_reaction("\N{THUMBS UP SIGN}")
             await message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
         if message.content.startswith(claim_str):
-            ex = message.content.replace(claim_str, "")
-            if not ex in exercises:
-                await message.author.send("Deze oefening bestaat niet of is al door iemand anders geclaimed!")
+            ex = message.content.replace(claim_str, "").strip()
+            if ex not in exercises:
+                await message.author.send("Ik begrijp niet welke oefening je bedoelt. Je moet de volledige oefening meegegeven zoals hij in mijn lijst staat.")
             else:
                 exercises.remove(ex)
                 await message.author.send("Je hebt oefening " + ex + " geclaimed. Veel succes!")
