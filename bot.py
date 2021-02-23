@@ -4,11 +4,13 @@ import config
 
 client = discord.Client()
 exercises: list = []
+claimed: list = []
 statusmessage = None
 CHANNELS = [810946686728929300, 810920527736340550, 541408928408272938]
 prefix = "%"
 load_str = prefix + "load "
 claim_str = prefix + "claim "
+unclaim_str = prefix + "unclaim "
 
 @client.event
 async def on_message(message):
@@ -17,6 +19,7 @@ async def on_message(message):
     if message.channel.id in CHANNELS:
         if message.content.startswith(load_str):
             exercises.clear()
+            claimed.clear()
             data: str = message.content.replace(load_str, "")
             data = data.strip('\n\t ')
             reeksen = data.split('\n')
@@ -39,10 +42,19 @@ async def on_message(message):
             if ex not in exercises:
                 await message.author.send("Ik begrijp niet welke oefening je bedoelt. Je moet de volledige oefening meegegeven zoals hij in mijn lijst staat.")
             else:
+                claimed.append(ex)
                 exercises.remove(ex)
                 await message.author.send("Je hebt oefening " + ex + " geclaimed. Veel succes!")
                 await message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
             await message.delete()
+        elif message.content.startswith(unclaim_str):
+            ex = message.content.replace(unclaim_str, "").strip()
+            if ex in claimed:
+                claimed.remove(ex)
+                exercises.append(ex)
+                await message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
+            await message.delete()
+
 
 
 @client.event
