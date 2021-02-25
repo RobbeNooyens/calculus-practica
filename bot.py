@@ -64,7 +64,7 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
 
-    if emoji == "\N{THUMBS UP SIGN}":
+    if emoji == "\N{THUMBS UP SIGN}" and reaction.message.author.bot:
         oefening: str = exercises.pop(0)
         claimed.append(oefening)
         await reaction.message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
