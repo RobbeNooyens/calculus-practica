@@ -1,3 +1,5 @@
+from random import randint
+
 import discord
 
 import config
@@ -65,7 +67,7 @@ async def on_reaction_add(reaction, user):
         return
 
     if emoji == "\N{THUMBS UP SIGN}" and reaction.message.author.bot:
-        oefening: str = exercises.pop(0)
+        oefening: str = exercises.pop(randint(0, len(exercises)-1))
         claimed.append(oefening)
         await reaction.message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
         await user.send("Je kan volgende oefening maken: " + oefening)
