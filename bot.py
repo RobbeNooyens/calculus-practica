@@ -66,6 +66,7 @@ async def on_reaction_add(reaction, user):
 
     if emoji == "\N{THUMBS UP SIGN}":
         oefening: str = exercises.pop(0)
+        claimed.append(oefening)
         await reaction.message.channel.send("Resterende oefeningen: " + ' | '.join([e for e in exercises]))
         await user.send("Je kan volgende oefening maken: " + oefening)
         await user.send("Veel succes!")
