@@ -93,9 +93,23 @@ async def on_message(message):
                     build += "<@" + str(uuid) + "> : "
                     for ex in claimed[uuid]:
                         build += ex + ", "
+                    build = build[:-2]
                     build += '\n'
             await message.channel.send(build)
             await message.delete()
+        elif message.content.startswith(prefix + 'filter ') and permissible(message.author):
+            exs = message.content.replace(prefix + 'filter ', "").strip().split('; ')
+            print("[FILTER]\t Gebruiker", message.author.display_name, '(', str(message.author.id),
+                  ') heeft de geclaimde oefeningen gefilterd op: ' + str(exs))
+            reply = "De volgende oefeningen zijn door " + message.author.mention + " als afgewerkt gemarkeerd: "
+            for uid in claimed:
+                for ex in claimed[uid]:
+                    if ex not in exs:
+                        reply += ex + ', '
+                        claimed[uid].remove(ex)
+            await message.channel.send(reply[:-2])
+            await message.delete()
+
         elif message.content.startswith(prefix + 'dump') and permissible(message.author):
             print('=' * 30)
             print('\t|', "Memory dump op aanvraag van ", message.author.display_name, '(', str(message.author.id), ')')
