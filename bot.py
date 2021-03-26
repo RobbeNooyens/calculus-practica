@@ -18,11 +18,33 @@ overview_str = prefix + "overview"
 
 permits = [238005886738628608, 434749785518505984]
 
+
 def permissible(author):
     for uuid in permits:
         if author.id == uuid:
             return True
     return False
+
+
+def parse_exercises(s):
+    returnvalue = list()
+
+    s = s.strip('\n\t ')
+    lines = s.split('\n')
+    for line in lines:
+        line = line.strip('\n\t ')
+        # Twee opties: Ofwel is len(line.split(' / ')) == 2, dan is het een blackboardstring,
+        # ofwel is len(line.split(' / ')) == 1, dan is het een botstring.
+        if len(line.split(' / ')) == 1:
+            returnvalue = returnvalue + line.split(' | ')
+        elif len(line.split(' / ')) == 2:
+            reeks = line.split(' / ')[0]
+            for ex in line.split(' / ')[1].split('; '):
+                returnvalue.append(reeks + '-' + ex)
+
+    returnvalue = sorted(returnvalue)
+
+    return returnvalue
 
 
 @client.event
@@ -37,16 +59,9 @@ async def on_message(message):
             exercises.clear()
             claimed.clear()
             data: str = message.content.replace(load_str, "")
-            data = data.strip('\n\t ')
-            reeksen = data.split('\n')
-            for reeks in reeksen:
-                components = reeks.split(' / ')
-                if len(components) != 2:
-                    continue
-                name = components[0]
-                toread = components[1]
-                for ex in toread.split('; '):
-                    exercises.append(name + "-" + ex)
+            exs = parse_exercises(data)
+            for i in exs:
+                exercises.append(i)
             print("[LOAD]\t Gebruiker", message.author.display_name, '(', str(message.author.id), ') heeft oefeningen ingeladen:', exercises)
             await message.delete()
             reply = await message.channel.send(
@@ -71,6 +86,7 @@ async def on_message(message):
             if ex in claimed[message.author.id]:
                 claimed[message.author.id].remove(ex)
                 exercises.append(ex)
+                exercises.sort()
                 print("[UNCLAIM]\t Gebruiker", message.author.display_name, '(', str(message.author.id),
                       ') heeft oefening',
                       ex, 'vrijgegeven.')
@@ -98,7 +114,7 @@ async def on_message(message):
             await message.channel.send(build)
             await message.delete()
         elif message.content.startswith(prefix + 'filter ') and permissible(message.author):
-            exs = message.content.replace(prefix + 'filter ', "").strip().split('; ')
+            exs = parse_exercises(message.content.replace(prefix + 'filter ', ""))
             print("[FILTER]\t Gebruiker", message.author.display_name, '(', str(message.author.id),
                   ') heeft de geclaimde oefeningen gefilterd op: ' + str(exs))
             reply = "De volgende oefeningen zijn door " + message.author.mention + " als afgewerkt gemarkeerd: "
